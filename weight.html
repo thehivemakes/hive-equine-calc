@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Horse Weight Estimator — EquineCalc</title>
+<meta name="description" content="Horse weight calculator. Estimate weight from heart girth and body length using the standard formula. Free equine tool.">
+<meta property="og:title" content="Horse Weight Estimator — EquineCalc">
+<meta property="og:description" content="Horse weight calculator. Estimate weight from heart girth and body length using the standard formula. Free equine tool.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://thehivemakes.github.io/hive-equine-calc/weight.html">
+<link rel="stylesheet" href="style.css">
+<script src="js/calc-core.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Horse Weight Estimator",
+  "url": "https://thehivemakes.github.io/hive-equine-calc/weight.html",
+  "description": "Horse weight calculator. Estimate weight from heart girth and body length using the standard formula. Free equine tool.",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any"
+}
+</script>
+</head>
+<body>
+<header><div class="header-inner"><div class="logo">Equine<span>Calc</span></div><div class="tagline">Free equine calculators</div></div></header>
+<nav><div class="nav-inner"><a href="index.html">EquineCalc</a><span class="sep">/</span><span>Horse Weight Estimator</span></div></nav>
+<main>
+  <div class="ad-leaderboard" id="ad-top">Ad</div>
+  <div class="card">
+    <h1>Horse Weight Estimator</h1>
+    <p class="subtitle">Enter heart girth and body length to estimate weight without a scale.</p>
+    <div class="form-grid">
+      <div class="field">
+        <label for="girth">Heart girth (inches)</label>
+        <input type="number" id="girth" step="0.5" placeholder="72">
+      </div>
+      <div class="field">
+        <label for="body_length">Body length (inches)</label>
+        <input type="number" id="body_length" step="0.5" placeholder="64">
+      </div>
+      <div class="field">
+        <label for="horse_type">Horse type</label>
+        <select id="horse_type"><option value="adult">Adult horse</option><option value="pony">Pony</option><option value="foal">Foal/yearling</option></select>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="calculate()">Calculate</button>
+    <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    <div class="result" id="result">
+      <div class="result-row">
+        <span class="result-label">Estimated weight (lbs)</span>
+        <span class="result-value" id="hw-lbs">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Estimated weight (kg)</span>
+        <span class="result-value" id="hw-kg">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Size category</span>
+        <span class="result-value" id="hw-category">—</span>
+      </div>
+      <div class="result-note">Formula: Weight (lbs) = Heart girth² × Body length ÷ 330. Heart girth measured around the barrel just behind the elbow. Body length measured from point of shoulder to point of buttock.</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2 style="font-size:16px;font-weight:700;margin-bottom:12px;">Average Horse Weights</h2>
+    <table class="ref-table" id="ref-table">
+      <thead><tr><th>Breed/Type</th><th>Weight Range (lbs)</th></tr></thead>
+      <tbody>
+        <tr><td>Miniature horse</td><td>150–350</td></tr>
+        <tr><td>Welsh pony</td><td>400–600</td></tr>
+        <tr><td>Arabian</td><td>800–1,000</td></tr>
+        <tr><td>Quarter Horse</td><td>1,000–1,300</td></tr>
+        <tr><td>Thoroughbred</td><td>1,000–1,200</td></tr>
+        <tr><td>Warmblood</td><td>1,200–1,500</td></tr>
+        <tr><td>Draft horse</td><td>1,600–2,200</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="ad-rectangle" id="ad-mid">Ad</div>
+  <div class="seo-section">
+    <h2>How to Estimate Horse Weight</h2>
+    <p>Knowing your horse's weight is essential for proper feeding, medication dosing, and health monitoring. Without a livestock scale, the weight tape formula provides a reliable estimate.</p>
+    <p>Measure heart girth (circumference around the barrel just behind the front legs) and body length (from the point of the shoulder to the point of the buttock). The formula Heart girth² × Body length ÷ 330 gives weight in pounds.</p>
+  </div>
+</main>
+<footer>Free equine calculators. No signup, no tracking. Always consult your veterinarian for medical decisions.<br>Built by <a href="https://thehivemakes.github.io/" style="color:var(--accent)">The Hive</a></footer>
+<script>
+
+function calculate() {
+  const g = CalcCore.get('girth');
+  const l = CalcCore.get('body_length');
+  const type = CalcCore.getSelect('horse_type');
+  if (isNaN(g)||isNaN(l)||g<=0||l<=0) return;
+
+  let divisor = 330;
+  if (type === 'pony') divisor = 299;
+  if (type === 'foal') divisor = 280;
+
+  const lbs = (g * g * l) / divisor;
+  const kg = lbs * 0.453592;
+
+  let category;
+  if (lbs < 400) category = 'Miniature / Small pony';
+  else if (lbs < 700) category = 'Pony';
+  else if (lbs < 1000) category = 'Light horse';
+  else if (lbs < 1400) category = 'Average horse';
+  else category = 'Large / Draft type';
+
+  CalcCore.set('hw-lbs', CalcCore.fmtInt(lbs) + ' lbs');
+  CalcCore.set('hw-kg', CalcCore.fmtInt(kg) + ' kg');
+  CalcCore.set('hw-category', category);
+  CalcCore.showResult();
+  CalcCore.saveParams(['girth','body_length','horse_type']);
+}
+
+function clearAll() {
+  ["girth", "body_length", "horse_type"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = el.defaultValue || '';
+  });
+  document.getElementById('result').classList.remove('visible');
+  history.replaceState(null, '', window.location.pathname);
+}
+
+document.addEventListener('DOMContentLoaded', () => { if (window.location.search) calculate(); });
+</script>
+</body>
+</html>

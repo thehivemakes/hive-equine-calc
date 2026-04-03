@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pasture Acreage Calculator — EquineCalc</title>
+<meta name="description" content="Horse pasture acreage calculator. Find how many acres per horse for your climate and management style. Free equine tool.">
+<meta property="og:title" content="Pasture Acreage Calculator — EquineCalc">
+<meta property="og:description" content="Horse pasture acreage calculator. Find how many acres per horse for your climate and management style. Free equine tool.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://thehivemakes.github.io/hive-equine-calc/pasture.html">
+<link rel="stylesheet" href="style.css">
+<script src="js/calc-core.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Pasture Acreage Calculator",
+  "url": "https://thehivemakes.github.io/hive-equine-calc/pasture.html",
+  "description": "Horse pasture acreage calculator. Find how many acres per horse for your climate and management style. Free equine tool.",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any"
+}
+</script>
+</head>
+<body>
+<header><div class="header-inner"><div class="logo">Equine<span>Calc</span></div><div class="tagline">Free equine calculators</div></div></header>
+<nav><div class="nav-inner"><a href="index.html">EquineCalc</a><span class="sep">/</span><span>Pasture Acreage Calculator</span></div></nav>
+<main>
+  <div class="ad-leaderboard" id="ad-top">Ad</div>
+  <div class="card">
+    <h1>Pasture Acreage Calculator</h1>
+    <p class="subtitle">Enter horse count and management approach to find required acreage.</p>
+    <div class="form-grid">
+      <div class="field">
+        <label for="num_horses">Number of horses</label>
+        <input type="number" id="num_horses" min="1" step="1" placeholder="3">
+      </div>
+      <div class="field">
+        <label for="climate">Climate / region</label>
+        <select id="climate"><option value="lush">Lush (Northeast, Pacific NW, UK)</option><option value="moderate">Moderate (Mid-Atlantic, Midwest)</option><option value="dry">Dry/arid (Southwest, Plains)</option><option value="tropical">Tropical (Southeast, Hawaii)</option></select>
+      </div>
+      <div class="field">
+        <label for="management">Pasture management</label>
+        <select id="management"><option value="rotational">Rotational grazing</option><option value="continuous">Continuous grazing</option><option value="sacrifice">Sacrifice lot + hay</option></select>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="calculate()">Calculate</button>
+    <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    <div class="result" id="result">
+      <div class="result-row">
+        <span class="result-label">Recommended acreage</span>
+        <span class="result-value" id="pa-acres">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Acres per horse</span>
+        <span class="result-value" id="pa-per-horse">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Management notes</span>
+        <span class="result-value" id="pa-note">—</span>
+      </div>
+      <div class="result-note">General rule: 2 acres per horse for maintained pasture in temperate climates. Dry climates may need 5–10+ acres. Rotational grazing allows more horses per acre.</div>
+    </div>
+  </div>
+
+  <div class="ad-rectangle" id="ad-mid">Ad</div>
+  <div class="seo-section">
+    <h2>How Much Pasture Per Horse?</h2>
+    <p>Pasture requirements depend on climate, soil quality, rainfall, and management. In lush climates with good management, 1.5–2 acres per horse is sufficient. In dry regions, 5–10 acres may be needed.</p>
+    <p>Rotational grazing (dividing pasture into paddocks and rotating horses through them) significantly improves grass recovery and can support 25–50% more horses per acre than continuous grazing.</p>
+  </div>
+</main>
+<footer>Free equine calculators. No signup, no tracking. Always consult your veterinarian for medical decisions.<br>Built by <a href="https://thehivemakes.github.io/" style="color:var(--accent)">The Hive</a></footer>
+<script>
+
+function calculate() {
+  const horses = CalcCore.get('num_horses');
+  const climate = CalcCore.getSelect('climate');
+  const mgmt = CalcCore.getSelect('management');
+  if (isNaN(horses)||horses<1) return;
+
+  let baseAcres;
+  if (climate === 'lush') baseAcres = 1.5;
+  else if (climate === 'moderate') baseAcres = 2.0;
+  else if (climate === 'dry') baseAcres = 7.0;
+  else baseAcres = 2.0;
+
+  let factor = 1.0;
+  let note;
+  if (mgmt === 'rotational') {
+    factor = 0.75;
+    note = 'Divide into 3–4 paddocks. Rotate every 1–2 weeks. Rest each paddock 3–4 weeks minimum. Mow after grazing to promote even regrowth.';
+  } else if (mgmt === 'continuous') {
+    factor = 1.25;
+    note = 'Continuous grazing requires more acreage to prevent overgrazing. Monitor grass height — pull horses off when grass is below 3 inches.';
+  } else {
+    factor = 0.5;
+    note = 'Sacrifice lot approach: keep horses on a small dry lot and provide all nutrition via hay. Minimal pasture needed, but higher hay costs.';
+  }
+
+  const total = horses * baseAcres * factor;
+  const perHorse = baseAcres * factor;
+
+  CalcCore.set('pa-acres', CalcCore.fmt(total, 1) + ' acres total');
+  CalcCore.set('pa-per-horse', CalcCore.fmt(perHorse, 1) + ' acres per horse');
+  CalcCore.set('pa-note', note);
+  CalcCore.showResult();
+  CalcCore.saveParams(['num_horses','climate','management']);
+}
+
+function clearAll() {
+  ["num_horses", "climate", "management"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = el.defaultValue || '';
+  });
+  document.getElementById('result').classList.remove('visible');
+  history.replaceState(null, '', window.location.pathname);
+}
+
+document.addEventListener('DOMContentLoaded', () => { if (window.location.search) calculate(); });
+</script>
+</body>
+</html>

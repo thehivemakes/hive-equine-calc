@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Body Condition Score Guide — EquineCalc</title>
+<meta name="description" content="Horse body condition score calculator. Henneke 1-9 scale assessment with descriptions. Free equine health tool.">
+<meta property="og:title" content="Body Condition Score Guide — EquineCalc">
+<meta property="og:description" content="Horse body condition score calculator. Henneke 1-9 scale assessment with descriptions. Free equine health tool.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://thehivemakes.github.io/hive-equine-calc/body-condition.html">
+<link rel="stylesheet" href="style.css">
+<script src="js/calc-core.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Body Condition Score Guide",
+  "url": "https://thehivemakes.github.io/hive-equine-calc/body-condition.html",
+  "description": "Horse body condition score calculator. Henneke 1-9 scale assessment with descriptions. Free equine health tool.",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any"
+}
+</script>
+</head>
+<body>
+<header><div class="header-inner"><div class="logo">Equine<span>Calc</span></div><div class="tagline">Free equine calculators</div></div></header>
+<nav><div class="nav-inner"><a href="index.html">EquineCalc</a><span class="sep">/</span><span>Body Condition Score Guide</span></div></nav>
+<main>
+  <div class="ad-leaderboard" id="ad-top">Ad</div>
+  <div class="card">
+    <h1>Body Condition Score Guide</h1>
+    <p class="subtitle">Select observations for each area to estimate body condition score.</p>
+    <div class="form-grid">
+      <div class="field">
+        <label for="neck">Neck fat</label>
+        <select id="neck"><option value="1">Bone structure visible</option><option value="3">Thin but no crest</option><option value="5">Blends smoothly into body</option><option value="7">Fat deposited along neck</option><option value="9">Thick, cresty neck</option></select>
+      </div>
+      <div class="field">
+        <label for="ribs">Ribs</label>
+        <select id="ribs"><option value="1">Ribs prominently visible</option><option value="3">Slight fat cover, ribs easily felt</option><option value="5">Ribs felt with slight pressure</option><option value="7">Fat between ribs, have to press to feel</option><option value="9">Cannot feel ribs, bulging fat</option></select>
+      </div>
+      <div class="field">
+        <label for="tailhead">Tailhead</label>
+        <select id="tailhead"><option value="1">Tailhead prominent, sunken</option><option value="3">Slight fat cover around tailhead</option><option value="5">Fat around tailhead feels spongy</option><option value="7">Fat very soft around tailhead</option><option value="9">Tailhead buried in fat, bulging</option></select>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="calculate()">Calculate</button>
+    <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    <div class="result" id="result">
+      <div class="result-row">
+        <span class="result-label">Estimated BCS</span>
+        <span class="result-value" id="bcs-score">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Category</span>
+        <span class="result-value" id="bcs-category">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Recommendation</span>
+        <span class="result-value" id="bcs-action">—</span>
+      </div>
+      <div class="result-note">Henneke scale: 1 = emaciated, 5 = moderate (ideal for most horses), 9 = extremely fat. Most horses should be 4–6. Broodmares often maintained at 5–7.</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2 style="font-size:16px;font-weight:700;margin-bottom:12px;">Henneke Body Condition Scale</h2>
+    <table class="ref-table" id="ref-table">
+      <thead><tr><th>BCS</th><th>Description</th><th>Category</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Emaciated</td><td>Critical — veterinary attention needed</td></tr>
+        <tr><td>2</td><td>Very thin</td><td>Underweight — increase feed</td></tr>
+        <tr><td>3</td><td>Thin</td><td>Below ideal — increase feed</td></tr>
+        <tr><td>4</td><td>Moderately thin</td><td>Acceptable for performance horses</td></tr>
+        <tr><td>5</td><td>Moderate</td><td>Ideal for most horses</td></tr>
+        <tr><td>6</td><td>Moderately fleshy</td><td>Acceptable, especially for broodmares</td></tr>
+        <tr><td>7</td><td>Fleshy</td><td>Above ideal — reduce feed/increase exercise</td></tr>
+        <tr><td>8</td><td>Fat</td><td>Overweight — laminitis risk increases</td></tr>
+        <tr><td>9</td><td>Extremely fat</td><td>Obese — veterinary attention needed</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="ad-rectangle" id="ad-mid">Ad</div>
+  <div class="seo-section">
+    <h2>How to Score Horse Body Condition</h2>
+    <p>The Henneke Body Condition Scoring System rates horses from 1 (emaciated) to 9 (extremely obese) by evaluating fat deposits in six areas: neck, withers, behind the shoulder, ribs, loin, and tailhead.</p>
+    <p>A score of 5 (moderate) is ideal for most horses. The ribs should be felt with slight pressure but not visually prominent. Regular BCS assessment helps prevent obesity-related conditions like laminitis and metabolic syndrome.</p>
+  </div>
+</main>
+<footer>Free equine calculators. No signup, no tracking. Always consult your veterinarian for medical decisions.<br>Built by <a href="https://thehivemakes.github.io/" style="color:var(--accent)">The Hive</a></footer>
+<script>
+
+function calculate() {
+  const neck = parseInt(CalcCore.getSelect('neck'));
+  const ribs = parseInt(CalcCore.getSelect('ribs'));
+  const tail = parseInt(CalcCore.getSelect('tailhead'));
+  if (isNaN(neck)||isNaN(ribs)||isNaN(tail)) return;
+
+  const avg = (neck + ribs + tail) / 3;
+  const bcs = Math.round(avg);
+
+  let category, action;
+  if (bcs <= 2) { category = 'Underweight / Emaciated'; action = 'Seek veterinary attention immediately. Increase feed gradually — refeeding syndrome risk with sudden calorie increase.'; }
+  else if (bcs <= 3) { category = 'Thin'; action = 'Increase forage quantity and quality. Consider adding concentrate. Reassess in 2–4 weeks.'; }
+  else if (bcs <= 4) { category = 'Moderately thin'; action = 'Slight increase in feed may help. Acceptable for performance horses in heavy work.'; }
+  else if (bcs <= 5) { category = 'Moderate — Ideal'; action = 'Maintain current feeding program. This is the target for most horses.'; }
+  else if (bcs <= 6) { category = 'Moderately fleshy'; action = 'Acceptable for broodmares and easy keepers. For others, slight feed reduction or increased exercise.'; }
+  else if (bcs <= 7) { category = 'Fleshy / Overweight'; action = 'Reduce concentrate. Increase exercise. Limit pasture time. Monitor for metabolic issues.'; }
+  else { category = 'Obese'; action = 'Veterinary consultation recommended. Gradual calorie reduction. Increased exercise. High laminitis risk.'; }
+
+  CalcCore.set('bcs-score', bcs + ' out of 9');
+  CalcCore.set('bcs-category', category);
+  CalcCore.set('bcs-action', action);
+  CalcCore.showResult();
+  CalcCore.saveParams(['neck','ribs','tailhead']);
+}
+
+function clearAll() {
+  ["neck", "ribs", "tailhead"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = el.defaultValue || '';
+  });
+  document.getElementById('result').classList.remove('visible');
+  history.replaceState(null, '', window.location.pathname);
+}
+
+document.addEventListener('DOMContentLoaded', () => { if (window.location.search) calculate(); });
+</script>
+</body>
+</html>

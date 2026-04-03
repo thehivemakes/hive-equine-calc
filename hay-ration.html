@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hay & Feed Ration Calculator — EquineCalc</title>
+<meta name="description" content="Horse hay ration calculator. Find daily forage and feed requirements by body weight and activity level. Free equine nutrition tool.">
+<meta property="og:title" content="Hay & Feed Ration Calculator — EquineCalc">
+<meta property="og:description" content="Horse hay ration calculator. Find daily forage and feed requirements by body weight and activity level. Free equine nutrition tool.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://thehivemakes.github.io/hive-equine-calc/hay-ration.html">
+<link rel="stylesheet" href="style.css">
+<script src="js/calc-core.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Hay & Feed Ration Calculator",
+  "url": "https://thehivemakes.github.io/hive-equine-calc/hay-ration.html",
+  "description": "Horse hay ration calculator. Find daily forage and feed requirements by body weight and activity level. Free equine nutrition tool.",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any"
+}
+</script>
+</head>
+<body>
+<header><div class="header-inner"><div class="logo">Equine<span>Calc</span></div><div class="tagline">Free equine calculators</div></div></header>
+<nav><div class="nav-inner"><a href="index.html">EquineCalc</a><span class="sep">/</span><span>Hay & Feed Ration Calculator</span></div></nav>
+<main>
+  <div class="ad-leaderboard" id="ad-top">Ad</div>
+  <div class="card">
+    <h1>Hay & Feed Ration Calculator</h1>
+    <p class="subtitle">Enter horse weight and workload to find daily forage and concentrate needs.</p>
+    <div class="form-grid">
+      <div class="field">
+        <label for="horse_weight">Horse weight (lbs)</label>
+        <input type="number" id="horse_weight" step="25" placeholder="1100">
+      </div>
+      <div class="field">
+        <label for="activity">Activity level</label>
+        <select id="activity"><option value="maintenance">Maintenance (idle/light)</option><option value="moderate">Moderate (regular riding)</option><option value="heavy">Heavy (competition/racing)</option><option value="breeding">Breeding/lactating</option></select>
+      </div>
+      <div class="field">
+        <label for="hay_quality">Hay quality</label>
+        <select id="hay_quality"><option value="good">Good (lush, leafy)</option><option value="average">Average</option><option value="poor">Poor (stemmy, old)</option></select>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="calculate()">Calculate</button>
+    <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    <div class="result" id="result">
+      <div class="result-row">
+        <span class="result-label">Daily forage (hay)</span>
+        <span class="result-value" id="hr-forage">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Daily concentrate (grain)</span>
+        <span class="result-value" id="hr-concentrate">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Total daily dry matter</span>
+        <span class="result-value" id="hr-total-dm">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Estimated daily water</span>
+        <span class="result-value" id="hr-water">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Monthly hay (approx)</span>
+        <span class="result-value" id="hr-monthly-hay">—</span>
+      </div>
+      <div class="result-note">Horses need 1.5–2.5% of body weight per day in dry matter, with at least 1% from forage. A 1,100 lb horse at maintenance needs 16.5–22 lbs of hay per day.</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2 style="font-size:16px;font-weight:700;margin-bottom:12px;">Feeding Guidelines by Activity</h2>
+    <table class="ref-table" id="ref-table">
+      <thead><tr><th>Activity</th><th>Forage (% BW)</th><th>Concentrate (% BW)</th><th>Total DM (% BW)</th></tr></thead>
+      <tbody>
+        <tr><td>Maintenance</td><td>1.5–2.0%</td><td>0–0.5%</td><td>1.5–2.0%</td></tr>
+        <tr><td>Moderate work</td><td>1.5%</td><td>0.5–1.0%</td><td>2.0–2.5%</td></tr>
+        <tr><td>Heavy work</td><td>1.0–1.5%</td><td>1.0–1.5%</td><td>2.0–2.5%</td></tr>
+        <tr><td>Lactating mare</td><td>1.5–2.0%</td><td>0.5–1.5%</td><td>2.5–3.0%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="ad-rectangle" id="ad-mid">Ad</div>
+  <div class="seo-section">
+    <h2>How Much Hay Does a Horse Need?</h2>
+    <p>The foundation of equine nutrition is forage (hay and/or pasture). A horse should consume at least 1–1.5% of its body weight in forage daily to maintain gut health and prevent ulcers and colic.</p>
+    <p>Concentrate (grain) supplements forage for working horses or those with higher energy needs. Most idle or lightly worked horses thrive on hay alone with a vitamin-mineral supplement.</p>
+  </div>
+</main>
+<footer>Free equine calculators. No signup, no tracking. Always consult your veterinarian for medical decisions.<br>Built by <a href="https://thehivemakes.github.io/" style="color:var(--accent)">The Hive</a></footer>
+<script>
+
+function calculate() {
+  const wt = CalcCore.get('horse_weight');
+  const act = CalcCore.getSelect('activity');
+  const qual = CalcCore.getSelect('hay_quality');
+  if (isNaN(wt)||wt<=0) return;
+
+  let foragePct, concPct;
+  if (act === 'maintenance') { foragePct = 0.018; concPct = 0.002; }
+  else if (act === 'moderate') { foragePct = 0.015; concPct = 0.008; }
+  else if (act === 'heavy') { foragePct = 0.013; concPct = 0.012; }
+  else { foragePct = 0.018; concPct = 0.010; }
+
+  if (qual === 'poor') foragePct *= 1.15;
+  if (qual === 'good') foragePct *= 0.90;
+
+  const forage = wt * foragePct;
+  const conc = wt * concPct;
+  const totalDM = forage + conc;
+  const water = wt * 0.05;
+  const monthlyHay = forage * 30;
+
+  CalcCore.set('hr-forage', CalcCore.fmt(forage, 1) + ' lbs/day');
+  CalcCore.set('hr-concentrate', CalcCore.fmt(conc, 1) + ' lbs/day');
+  CalcCore.set('hr-total-dm', CalcCore.fmt(totalDM, 1) + ' lbs/day (' + CalcCore.fmt(totalDM/wt*100, 1) + '% BW)');
+  CalcCore.set('hr-water', CalcCore.fmt(water, 0) + ' lbs (' + CalcCore.fmt(water/8.34, 1) + ' gallons)');
+  CalcCore.set('hr-monthly-hay', CalcCore.fmtInt(monthlyHay) + ' lbs (~' + CalcCore.fmt(monthlyHay/60, 0) + ' small square bales)');
+  CalcCore.showResult();
+  CalcCore.saveParams(['horse_weight','activity','hay_quality']);
+}
+
+function clearAll() {
+  ["horse_weight", "activity", "hay_quality"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = el.defaultValue || '';
+  });
+  document.getElementById('result').classList.remove('visible');
+  history.replaceState(null, '', window.location.pathname);
+}
+
+document.addEventListener('DOMContentLoaded', () => { if (window.location.search) calculate(); });
+</script>
+</body>
+</html>

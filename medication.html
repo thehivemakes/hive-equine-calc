@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medication Dosing Calculator — EquineCalc</title>
+<meta name="description" content="Horse medication dosing calculator. Weight-based dosing for common equine drugs. Always verify with your veterinarian. Free tool.">
+<meta property="og:title" content="Medication Dosing Calculator — EquineCalc">
+<meta property="og:description" content="Horse medication dosing calculator. Weight-based dosing for common equine drugs. Always verify with your veterinarian. Free tool.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://thehivemakes.github.io/hive-equine-calc/medication.html">
+<link rel="stylesheet" href="style.css">
+<script src="js/calc-core.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Medication Dosing Calculator",
+  "url": "https://thehivemakes.github.io/hive-equine-calc/medication.html",
+  "description": "Horse medication dosing calculator. Weight-based dosing for common equine drugs. Always verify with your veterinarian. Free tool.",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any"
+}
+</script>
+</head>
+<body>
+<header><div class="header-inner"><div class="logo">Equine<span>Calc</span></div><div class="tagline">Free equine calculators</div></div></header>
+<nav><div class="nav-inner"><a href="index.html">EquineCalc</a><span class="sep">/</span><span>Medication Dosing Calculator</span></div></nav>
+<main>
+  <div class="ad-leaderboard" id="ad-top">Ad</div>
+  <div class="card">
+    <h1>Medication Dosing Calculator</h1>
+    <p class="subtitle">Enter horse weight and medication to find the correct dose.</p>
+    <div class="form-grid">
+      <div class="field">
+        <label for="med_weight">Horse weight (lbs)</label>
+        <input type="number" id="med_weight" step="25" placeholder="1100">
+      </div>
+      <div class="field">
+        <label for="medication">Medication</label>
+        <select id="medication"><option value="bute_paste">Phenylbutazone (Bute) paste</option><option value="bute_tab">Phenylbutazone (Bute) tablets</option><option value="banamine_paste">Flunixin (Banamine) paste</option><option value="dewormer">Ivermectin dewormer</option><option value="electrolytes">Electrolyte powder</option></select>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="calculate()">Calculate</button>
+    <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    <div class="result" id="result">
+      <div class="result-row">
+        <span class="result-label">Dose</span>
+        <span class="result-value" id="med-dose">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Frequency</span>
+        <span class="result-value" id="med-freq">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Maximum duration</span>
+        <span class="result-value" id="med-max">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Important notes</span>
+        <span class="result-value" id="med-warning">—</span>
+      </div>
+      <div class="result-note">DISCLAIMER: This calculator provides general dosing guidelines only. Always consult your veterinarian before administering medication. Incorrect dosing can cause serious harm.</div>
+    </div>
+  </div>
+
+  <div class="ad-rectangle" id="ad-mid">Ad</div>
+  <div class="seo-section">
+    <h2>Common Equine Medication Doses</h2>
+    <p>Accurate medication dosing is critical for horse health. Most equine drugs are dosed by body weight. Under-dosing reduces effectiveness; over-dosing can cause toxicity.</p>
+    <p>This calculator provides standard dosing guidelines for common equine medications. Always verify doses with your veterinarian, especially for prescription drugs and any horse with health conditions.</p>
+  </div>
+</main>
+<footer>Free equine calculators. No signup, no tracking. Always consult your veterinarian for medical decisions.<br>Built by <a href="https://thehivemakes.github.io/" style="color:var(--accent)">The Hive</a></footer>
+<script>
+
+function calculate() {
+  const wt = CalcCore.get('med_weight');
+  const med = CalcCore.getSelect('medication');
+  if (isNaN(wt)||wt<=0) return;
+
+  const wtKg = wt * 0.453592;
+  let dose, freq, maxDur, warning;
+
+  if (med === 'bute_paste') {
+    const mgDose = Math.min(wtKg * 4.4, 4000);
+    dose = CalcCore.fmt(mgDose, 0) + ' mg (' + CalcCore.fmt(mgDose/1000, 1) + ' grams)';
+    freq = 'Every 12–24 hours';
+    maxDur = '5 days maximum (risk of GI ulceration)';
+    warning = 'Do not exceed 4.4 mg/kg. Not for use in horses intended for food. Monitor for GI upset.';
+  } else if (med === 'bute_tab') {
+    const numTabs = Math.round(wtKg * 4.4 / 1000);
+    dose = numTabs + ' gram tablet(s)';
+    freq = 'Every 12–24 hours';
+    maxDur = '5 days maximum';
+    warning = 'Crush and mix with feed for easier administration. Same cautions as paste.';
+  } else if (med === 'banamine_paste') {
+    const mgDose = wtKg * 1.1;
+    dose = CalcCore.fmt(mgDose, 0) + ' mg (' + CalcCore.fmt(mgDose/1000, 2) + ' grams paste)';
+    freq = 'Every 12–24 hours';
+    maxDur = '5 days maximum';
+    warning = 'Do NOT inject intramuscularly — causes severe tissue damage. Oral or IV only.';
+  } else if (med === 'dewormer') {
+    const mgDose = wtKg * 0.2;
+    dose = CalcCore.fmt(mgDose, 0) + ' mg ivermectin (' + CalcCore.fmt(wt, 0) + ' lbs on dial)';
+    freq = 'Per deworming schedule (typically every 2–3 months)';
+    maxDur = 'Single dose per treatment';
+    warning = 'Set paste syringe to horse weight on dial. Base deworming on fecal egg counts, not calendar.';
+  } else {
+    dose = CalcCore.fmt(wt * 0.03, 0) + ' oz electrolyte powder in water';
+    freq = 'Daily in hot weather or after heavy work';
+    maxDur = 'As needed';
+    warning = 'Always provide plain water alongside electrolyte water. Horse must have free-choice access to plain water.';
+  }
+
+  CalcCore.set('med-dose', dose);
+  CalcCore.set('med-freq', freq);
+  CalcCore.set('med-max', maxDur);
+  CalcCore.set('med-warning', warning);
+  CalcCore.showResult();
+  CalcCore.saveParams(['med_weight','medication']);
+}
+
+function clearAll() {
+  ["med_weight", "medication"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = el.defaultValue || '';
+  });
+  document.getElementById('result').classList.remove('visible');
+  history.replaceState(null, '', window.location.pathname);
+}
+
+document.addEventListener('DOMContentLoaded', () => { if (window.location.search) calculate(); });
+</script>
+</body>
+</html>
