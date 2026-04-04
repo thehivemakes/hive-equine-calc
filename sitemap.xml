@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://equine.thehivemakes.com/</loc><priority>1.0</priority></url>
-  <url><loc>https://equine.thehivemakes.com/weight.html</loc><priority>0.8</priority></url>
-  <url><loc>https://equine.thehivemakes.com/hay-ration.html</loc><priority>0.8</priority></url>
-  <url><loc>https://equine.thehivemakes.com/medication.html</loc><priority>0.8</priority></url>
-  <url><loc>https://equine.thehivemakes.com/pasture.html</loc><priority>0.8</priority></url>
-  <url><loc>https://equine.thehivemakes.com/body-condition.html</loc><priority>0.8</priority></url>
+  <url><loc>https://thehivemakes.github.io/hive-equine-calc/</loc><priority>1.0</priority></url>
+  <url><loc>https://thehivemakes.github.io/hive-equine-calc/weight.html</loc><priority>0.8</priority></url>
+  <url><loc>https://thehivemakes.github.io/hive-equine-calc/hay-ration.html</loc><priority>0.8</priority></url>
+  <url><loc>https://thehivemakes.github.io/hive-equine-calc/medication.html</loc><priority>0.8</priority></url>
+  <url><loc>https://thehivemakes.github.io/hive-equine-calc/pasture.html</loc><priority>0.8</priority></url>
+  <url><loc>https://thehivemakes.github.io/hive-equine-calc/body-condition.html</loc><priority>0.8</priority></url>
 </urlset>
